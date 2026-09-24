@@ -1,8 +1,11 @@
 *.log
 .DS_Store
+.editorconfig
 .env
 .env.backup
+.env.example
 .env.production
+.gitattributes
 .phpactor.json
 .phpunit.result.cache
 /.fleet
