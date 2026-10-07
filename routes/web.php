@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -13,15 +15,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::view('/students', 'pages.placeholder', [
-        'title' => 'Students',
-        'description' => 'Manage student records from this section.',
-    ])->name('students.index');
+    Route::resource('students', StudentController::class)->only(['index', 'create', 'store']);
 
-    Route::view('/courses', 'pages.placeholder', [
-        'title' => 'Courses',
-        'description' => 'Manage courses from this section.',
-    ])->name('courses.index');
+    Route::resource('courses', CourseController::class)->except(['show']);
 
     Route::view('/fees', 'pages.placeholder', [
         'title' => 'Fees',

@@ -1,159 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.app')
 
-    <title>Student Registration Form</title>
+@section('title', 'Register student')
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body class="bg-light">
-
-    <div class="container mt-5">
-
-        <div class="row justify-content-center">
-
-            <div class="col-md-6">
-
-                <div class="card shadow">
-
-                    <!-- Card Header -->
-                    <div class="card-header bg-primary text-white">
-
-                        <h3 class="mb-0">
-                            Student Registration Form
-                        </h3>
-
-                    </div>
-
-                    <!-- Card Body -->
-                    <div class="card-body">
-
-                        <!-- Error Message Example -->
-                        <div class="alert alert-danger">
-                            Please correct the errors in the form.
-                        </div>
-
-                        <!-- Student Form -->
-                        <form method="post" action="#">
-
-                            <!-- First Name -->
-                            <div class="mb-3">
-
-                                <label class="form-label">
-                                    First Name
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="firstname"
-                                    class="form-control"
-                                    placeholder="Enter First Name"
-                                >
-
-                            </div>
-
-
-                            <!-- Second Name -->
-                            <div class="mb-3">
-
-                                <label class="form-label">
-                                    Second Name
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="secondname"
-                                    class="form-control"
-                                    placeholder="Enter Second Name"
-                                >
-
-                            </div>
-
-
-                            <!-- Email -->
-                            <div class="mb-3">
-
-                                <label class="form-label">
-                                    Email Address
-                                </label>
-
-                                <input
-                                    type="email"
-                                    name="email"
-                                    class="form-control"
-                                    placeholder="Enter Email"
-                                >
-
-                            </div>
-
-
-                            <!-- Phone Number -->
-                            <div class="mb-3">
-
-                                <label class="form-label">
-                                    Phone Number
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="phoneno"
-                                    class="form-control"
-                                    placeholder="Enter Phone Number"
-                                >
-
-                            </div>
-
-
-                            <!-- Course -->
-                            <div class="mb-3">
-
-                                <label class="form-label">
-                                    Course
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="course"
-                                    class="form-control"
-                                    placeholder="Enter Course"
-                                >
-
-                            </div>
-
-
-                            <!-- Submit Button -->
-                            <div class="d-grid mb-2">
-
-                                <input
-                                    type="submit"
-                                    value="Submit"
-                                    class="btn btn-primary"
-                                >
-
-                            </div>
-
-
-                            <!-- Go Back Button -->
-                            <a href="#" class="btn btn-light w-100">
-                                Go Back
-                            </a>
-
-                        </form>
-
-                    </div>
-
-                </div>
-
+@section('content')
+    <div class="container-fluid p-0">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h2 fw-bold mb-1">Register student</h1>
+                <p class="text-secondary mb-0">Add a student and their initial course enrollment.</p>
             </div>
-
+            <a class="btn btn-outline-secondary" href="{{ route('students.index') }}">Back to students</a>
         </div>
 
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                @if ($errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        Please correct the errors below.
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('students.store') }}">
+                    @csrf
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="firstname" class="form-label">First name</label>
+                            <input id="firstname" name="firstname" value="{{ old('firstname') }}" required
+                                   class="form-control @error('firstname') is-invalid @enderror">
+                            @error('firstname') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="secondname" class="form-label">Second name</label>
+                            <input id="secondname" name="secondname" value="{{ old('secondname') }}" required
+                                   class="form-control @error('secondname') is-invalid @enderror">
+                            @error('secondname') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email address</label>
+                            <input id="email" name="email" type="email" value="{{ old('email') }}" required
+                                   class="form-control @error('email') is-invalid @enderror">
+                            @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phoneno" class="form-label">Phone number</label>
+                            <input id="phoneno" name="phoneno" value="{{ old('phoneno') }}" required
+                                   class="form-control @error('phoneno') is-invalid @enderror">
+                            @error('phoneno') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label for="course" class="form-label">Course</label>
+                            <input id="course" name="course" value="{{ old('course') }}" required
+                                   class="form-control @error('course') is-invalid @enderror">
+                            @error('course') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label for="semester" class="form-label">Semester</label>
+                            <input id="semester" name="semester" value="{{ old('semester') }}" required
+                                   class="form-control @error('semester') is-invalid @enderror">
+                            @error('semester') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label for="academic_year" class="form-label">Academic year</label>
+                            <input id="academic_year" name="academic_year" value="{{ old('academic_year') }}"
+                                   placeholder="e.g. 2026/2027" required
+                                   class="form-control @error('academic_year') is-invalid @enderror">
+                            @error('academic_year') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Register student</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-</body>
-</html>
-
+@endsection

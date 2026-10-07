@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -61,6 +62,55 @@ class DashboardTest extends TestCase
             ->get(route('settings'))
             ->assertOk()
             ->assertSee(route('profile.edit'), false);
+    }
+
+    public function test_authenticated_user_can_register_a_student_with_an_enrollment(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->post(route('students.store'), [
+                'firstname' => 'Amina',
+                'secondname' => 'Otieno',
+                'email' => 'amina@example.test',
+                'phoneno' => '+254700000000',
+                'course' => 'Computer Science',
+                'semester' => 'Semester 1',
+                'academic_year' => '2026/2027',
+            ]);
+
+        $student = Student::where('email', 'amina@example.test')->firstOrFail();
+        $enrollment = $student->enrollments()->firstOrFail();
+
+        $response->assertRedirect(route('students.index'));
+        $this->assertDatabaseHas('enrollments', [
+            'student_id' => $student->id,
+            'course_id' => $enrollment->course_id,
+            'semester_id' => $enrollment->semester_id,
+            'academic_year_id' => $enrollment->academic_year_id,
+        ]);
+        $this->assertDatabaseHas('courses', ['name' => 'Computer Science']);
+        $this->assertDatabaseHas('semesters', ['name' => 'Semester 1']);
+        $this->assertDatabaseHas('academic_years', ['name' => '2026/2027']);
+    }
+
+    public function test_student_registration_requires_valid_enrollment_details(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->from(route('students.create'))
+            ->post(route('students.store'), [
+                'firstname' => 'Amina',
+                'secondname' => 'Otieno',
+                'email' => 'invalid-email',
+                'phoneno' => '+254700000000',
+                'course' => '',
+                'semester' => '',
+                'academic_year' => '',
+            ])
+            ->assertSessionHasErrors(['email', 'course', 'semester', 'academic_year']);
+
+        $this->assertDatabaseCount('students', 0);
+        $this->assertDatabaseCount('enrollments', 0);
     }
 
     public function test_dashboard_navigation_has_working_menu_links_and_account_actions(): void
