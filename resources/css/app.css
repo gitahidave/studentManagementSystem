@@ -1,15 +1,19 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import "bootstrap/dist/css/bootstrap.min.css";
-@import "bootstrap-icons/font/bootstrap-icons.css";
-
-/* Sidebar layout styles */
 .sidebar {
+    flex: 0 0 240px;
     width: 240px;
-    min-height: calc(100vh - 56px);
+    min-height: calc(100vh - 58px);
     background-color: #0d233a;
+}
+
+.sidebar.collapse {
+    visibility: visible;
 }
 
 .sidebar .nav-link {
@@ -23,9 +27,23 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.navbar-user-name {
+    max-width: 12rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 @media (max-width: 767.98px) {
     .sidebar {
+        flex-basis: auto;
         width: 100%;
         min-height: auto;
+    }
+}
+
+@media (min-width: 768px) {
+    .sidebar.collapse:not(.show) {
+        display: block;
     }
 }

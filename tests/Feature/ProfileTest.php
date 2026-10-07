@@ -18,7 +18,12 @@ class ProfileTest extends TestCase
             ->actingAs($user)
             ->get('/profile');
 
-        $response->assertOk();
+        $response
+            ->assertOk()
+            ->assertSeeText('Profile Information')
+            ->assertSeeText('Update Password')
+            ->assertSeeText('Delete Account')
+            ->assertSee(route('dashboard'), false);
     }
 
     public function test_profile_information_can_be_updated(): void
