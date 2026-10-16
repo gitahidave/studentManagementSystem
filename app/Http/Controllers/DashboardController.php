@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Course;
+use App\Models\Enrollment;
+use App\Models\Student;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Dynamic dashboard metrics passed to Blade view
-        $totalStudents = 250;
-        $totalCourses = 12;
-        $feesCollected = 'KES 500,000';
-        $outstandingFees = 'KES 120,000';
+        $totalStudents = Student::count();
+        $totalCourses = Course::count();
+        $totalEnrollments = Enrollment::count();
+        $activeCourses = Course::where('status', 'active')->count();
 
         return view('dashboard', compact(
             'totalStudents',
             'totalCourses',
-            'feesCollected',
-            'outstandingFees'
+            'totalEnrollments',
+            'activeCourses'
         ));
     }
 }

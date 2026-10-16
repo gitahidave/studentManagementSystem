@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\AcademicYear;
+use App\Models\Course;
+use App\Models\Semester;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -20,20 +23,46 @@ class DashboardTest extends TestCase
     public function test_authenticated_users_can_access_the_dashboard_without_verified_email(): void
     {
         $user = User::factory()->unverified()->create(['name' => 'Dashboard Student']);
+        $activeCourse = Course::create([
+            'name' => 'Computer Science',
+            'status' => 'active',
+        ]);
+        Course::create([
+            'name' => 'Business',
+            'status' => 'active',
+        ]);
+        Course::create([
+            'name' => 'History',
+            'status' => 'inactive',
+        ]);
+        $student = Student::create([
+            'firstname' => 'Amina',
+            'secondname' => 'Otieno',
+            'email' => 'amina@example.test',
+            'phoneno' => '+254700000000',
+            'course' => $activeCourse->name,
+        ]);
+        $student->enrollments()->create([
+            'course_id' => $activeCourse->id,
+            'semester_id' => Semester::create(['name' => 'Semester 1'])->id,
+            'academic_year_id' => AcademicYear::create(['name' => '2026/2027'])->id,
+        ]);
 
         $this->actingAs($user)
             ->get(route('dashboard'))
             ->assertOk()
             ->assertSeeText('Dashboard Student')
             ->assertSeeText('Welcome to the Student Management System.')
-            ->assertSeeText('Total Students')
-            ->assertSeeText('250')
-            ->assertSeeText('Total Courses')
-            ->assertSeeText('12')
-            ->assertSeeText('Fees Collected')
-            ->assertSeeText('KES 500,000')
-            ->assertSeeText('Outstanding Fees')
-            ->assertSeeText('KES 120,000')
+            ->assertSeeInOrder([
+                'Total Students',
+                '>1</h3>',
+                'Total Courses',
+                '>3</h3>',
+                'Total Enrollments',
+                '>1</h3>',
+                'Active Courses',
+                '>2</h3>',
+            ], false)
             ->assertSee('class="nav-link active"', false);
     }
 

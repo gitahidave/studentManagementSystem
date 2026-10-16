@@ -29,18 +29,18 @@
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
                 <x-summary-card
-                    title="Fees Collected"
-                    :value="$feesCollected"
-                    icon="cash-coin"
+                    title="Total Enrollments"
+                    :value="$totalEnrollments"
+                    icon="person-check-fill"
                     color="text-success"
                 />
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
                 <x-summary-card
-                    title="Outstanding Fees"
-                    :value="$outstandingFees"
-                    icon="credit-card-fill"
-                    color="text-danger"
+                    title="Active Courses"
+                    :value="$activeCourses"
+                    icon="check-circle-fill"
+                    color="text-warning"
                 />
             </div>
         </div>
