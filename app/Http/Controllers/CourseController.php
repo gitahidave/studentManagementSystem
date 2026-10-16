@@ -25,12 +25,7 @@ class CourseController extends Controller
     {
         $validated = $this->validateCourse($request);
 
-        Course::create([
-            'name' => $validated['course_name'],
-            'course_code' => $validated['course_code'],
-            'duration' => $validated['duration'] ?? null,
-            'status' => $validated['status'],
-        ]);
+        Course::create(['name' => $validated['name']]);
 
         return redirect()->route('courses.index')->with('status', 'Course added successfully.');
     }
@@ -44,12 +39,7 @@ class CourseController extends Controller
     {
         $validated = $this->validateCourse($request, $course);
 
-        $course->update([
-            'name' => $validated['course_name'],
-            'course_code' => $validated['course_code'],
-            'duration' => $validated['duration'] ?? null,
-            'status' => $validated['status'],
-        ]);
+        $course->update(['name' => $validated['name']]);
 
         return redirect()->route('courses.index')->with('status', 'Course updated successfully.');
     }
@@ -58,7 +48,7 @@ class CourseController extends Controller
     {
         if ($course->students()->exists()) {
             return redirect()->route('courses.index')
-                ->with('error', 'This course has student enrollments and cannot be deleted.');
+                ->with('error', 'This course has students and cannot be deleted.');
         }
 
         $course->delete();
@@ -69,20 +59,12 @@ class CourseController extends Controller
     private function validateCourse(Request $request, ?Course $course = null): array
     {
         return $request->validate([
-            'course_name' => [
+            'name' => [
                 'required',
                 'string',
                 'max:255',
                 'unique:courses,name'.($course ? ','.$course->id : ''),
             ],
-            'course_code' => [
-                'required',
-                'string',
-                'max:50',
-                'unique:courses,course_code'.($course ? ','.$course->id : ''),
-            ],
-            'duration' => ['nullable', 'string', 'max:100'],
-            'status' => ['required', 'in:active,inactive'],
         ]);
     }
 }

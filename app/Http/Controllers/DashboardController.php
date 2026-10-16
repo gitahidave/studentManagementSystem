@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
-use App\Models\Enrollment;
+use App\Models\Fee;
 use App\Models\Student;
 
 class DashboardController extends Controller
@@ -12,14 +12,12 @@ class DashboardController extends Controller
     {
         $totalStudents = Student::count();
         $totalCourses = Course::count();
-        $totalEnrollments = Enrollment::count();
-        $activeCourses = Course::where('status', 'active')->count();
+        $totalFees = Fee::count();
 
         return view('dashboard', compact(
             'totalStudents',
             'totalCourses',
-            'totalEnrollments',
-            'activeCourses'
+            'totalFees'
         ));
     }
 }

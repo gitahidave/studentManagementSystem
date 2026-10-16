@@ -2,9 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\AcademicYear;
 use App\Models\Course;
-use App\Models\Semester;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,34 +29,22 @@ class CoursesTest extends TestCase
             ->assertSee(route('courses.create'), false);
 
         $this->post(route('courses.store'), [
-            'course_code' => 'CS101',
-            'course_name' => 'Computer Science',
-            'duration' => '4 years',
-            'status' => 'active',
+            'name' => 'Computer Science',
         ])->assertRedirect(route('courses.index'));
 
-        $course = Course::where('course_code', 'CS101')->firstOrFail();
+        $course = Course::where('name', 'Computer Science')->firstOrFail();
 
         $this->assertDatabaseHas('courses', [
             'name' => 'Computer Science',
-            'course_code' => 'CS101',
-            'duration' => '4 years',
-            'status' => 'active',
         ]);
 
         $this->put(route('courses.update', $course), [
-            'course_code' => 'CS102',
-            'course_name' => 'Applied Computer Science',
-            'duration' => '3 years',
-            'status' => 'inactive',
+            'name' => 'Applied Computer Science',
         ])->assertRedirect(route('courses.index'));
 
         $this->assertDatabaseHas('courses', [
             'id' => $course->id,
             'name' => 'Applied Computer Science',
-            'course_code' => 'CS102',
-            'duration' => '3 years',
-            'status' => 'inactive',
         ]);
 
         $this->delete(route('courses.destroy', $course))
@@ -67,27 +53,14 @@ class CoursesTest extends TestCase
         $this->assertDatabaseMissing('courses', ['id' => $course->id]);
     }
 
-    public function test_course_with_enrollments_cannot_be_deleted(): void
+    public function test_course_with_students_cannot_be_deleted(): void
     {
         $user = User::factory()->create();
-        $course = Course::create([
-            'name' => 'Computer Science',
-            'course_code' => 'CS101',
-            'status' => 'active',
-        ]);
-        $student = Student::create([
-            'firstname' => 'Amina',
-            'secondname' => 'Otieno',
-            'email' => 'amina@example.test',
-            'phoneno' => '+254700000000',
-            'course' => $course->name,
-        ]);
-        $semester = Semester::create(['name' => 'Semester 1']);
-        $academicYear = AcademicYear::create(['name' => '2026/2027']);
-        $student->enrollments()->create([
+        $course = Course::create(['name' => 'Computer Science']);
+        Student::create([
+            'first_name' => 'Amina',
+            'second_name' => 'Otieno',
             'course_id' => $course->id,
-            'semester_id' => $semester->id,
-            'academic_year_id' => $academicYear->id,
         ]);
 
         $this->actingAs($user)

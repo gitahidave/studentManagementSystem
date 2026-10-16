@@ -7,7 +7,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1 class="h2 fw-bold mb-1">Students</h1>
-                <p class="text-secondary mb-0">Students and their course enrollments.</p>
+                <p class="text-secondary mb-0">Students registered for each course.</p>
             </div>
             <a class="btn btn-primary" href="{{ route('students.create') }}">
                 <i class="bi bi-person-plus me-2" aria-hidden="true"></i>Register student
@@ -24,36 +24,18 @@
                     <thead class="table-light">
                         <tr>
                             <th scope="col">Student</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Phone</th>
                             <th scope="col">Course</th>
-                            <th scope="col">Semester</th>
-                            <th scope="col">Academic year</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($students as $student)
-                            @forelse ($student->enrollments as $enrollment)
-                                <tr>
-                                    <td>{{ $student->firstname }} {{ $student->secondname }}</td>
-                                    <td>{{ $student->email }}</td>
-                                    <td>{{ $student->phoneno }}</td>
-                                    <td>{{ $enrollment->course->name }}</td>
-                                    <td>{{ $enrollment->semester->name }}</td>
-                                    <td>{{ $enrollment->academicYear->name }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td>{{ $student->firstname }} {{ $student->secondname }}</td>
-                                    <td>{{ $student->email }}</td>
-                                    <td>{{ $student->phoneno }}</td>
-                                    <td>{{ $student->course }}</td>
-                                    <td colspan="2" class="text-secondary">No enrollment details</td>
-                                </tr>
-                            @endforelse
+                            <tr>
+                                <td>{{ $student->first_name }} {{ $student->second_name }}</td>
+                                <td>{{ $student->course->name }}</td>
+                            </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-secondary py-4">
+                                <td colspan="2" class="text-center text-secondary py-4">
                                     No students registered yet.
                                 </td>
                             </tr>

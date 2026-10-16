@@ -3,26 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
 {
-    protected $fillable = [
-        'name',
-        'course_code',
-        'duration',
-        'status',
-    ];
+    protected $fillable = ['name'];
 
-    public function getCourseNameAttribute(): string
+    public function students(): HasMany
     {
-        return $this->name;
-    }
-
-    public function students(): BelongsToMany
-    {
-        return $this->belongsToMany(Student::class, 'enrollments')
-            ->withPivot(['semester_id', 'academic_year_id'])
-            ->withTimestamps();
+        return $this->hasMany(Student::class);
     }
 }

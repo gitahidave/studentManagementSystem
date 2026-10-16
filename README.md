@@ -31,9 +31,10 @@ For frontend development, run `npm run dev` in a second terminal while the Larav
 - The dashboard and its sidebar destinations require authentication.
 - Dashboard summary values are passed to the view by `DashboardController`.
 - The shared Blade layout includes the navbar, responsive collapsible sidebar, notification badge, and authenticated user menu.
-- Student registration is available to authenticated users at `/students`. Each registration creates an enrollment connecting the student, course, semester, and academic year. Course, semester, and academic-year names are created as catalog records when first entered.
-- Authenticated users can create, list, edit, and delete courses at `/courses`. Courses with student enrollments cannot be deleted, to prevent accidental loss of enrollment data.
-- The `enrollments` table stores `student_id`, `course_id`, `semester_id`, and `academic_year_id`, and prevents duplicate enrollments for the same combination.
+- Student registration is available to authenticated users at `/students`. Each student has a first name, second name, and course.
+- Authenticated users can create, list, edit, and delete courses at `/courses`. Courses with students cannot be deleted.
+- The required application tables are `courses` (`name`), `students` (`first_name`, `second_name`, `course_id`), and `fees` (`student_id`, `amount`, `fee_type`, `status`).
+- Before migrating an existing database, make a backup. The schema update removes legacy student email/phone fields, course metadata, and enrollment/semester/academic-year tables after preserving each student's course assignment.
 - Courses, fees, payments, reports, and settings currently have authenticated placeholder pages so their navigation links work.
 
 Run the automated checks with:

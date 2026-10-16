@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\AcademicYear;
 use App\Models\Course;
-use App\Models\Semester;
+use App\Models\Fee;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class DashboardTest extends TestCase
@@ -20,32 +20,41 @@ class DashboardTest extends TestCase
             ->assertRedirect(route('login'));
     }
 
+    public function test_required_tables_have_the_expected_columns(): void
+    {
+        $this->assertSame(
+            ['id', 'name', 'created_at', 'updated_at'],
+            Schema::getColumnListing('courses')
+        );
+        $this->assertSame(
+            ['id', 'first_name', 'second_name', 'course_id', 'created_at', 'updated_at'],
+            Schema::getColumnListing('students')
+        );
+        $this->assertSame(
+            ['id', 'student_id', 'amount', 'fee_type', 'status', 'created_at', 'updated_at'],
+            Schema::getColumnListing('fees')
+        );
+        $this->assertFalse(Schema::hasTable('enrollments'));
+        $this->assertFalse(Schema::hasTable('academic_years'));
+        $this->assertFalse(Schema::hasTable('semesters'));
+    }
+
     public function test_authenticated_users_can_access_the_dashboard_without_verified_email(): void
     {
         $user = User::factory()->unverified()->create(['name' => 'Dashboard Student']);
-        $activeCourse = Course::create([
-            'name' => 'Computer Science',
-            'status' => 'active',
-        ]);
-        Course::create([
-            'name' => 'Business',
-            'status' => 'active',
-        ]);
-        Course::create([
-            'name' => 'History',
-            'status' => 'inactive',
-        ]);
+        $course = Course::create(['name' => 'Computer Science']);
+        Course::create(['name' => 'Business']);
+        Course::create(['name' => 'History']);
         $student = Student::create([
-            'firstname' => 'Amina',
-            'secondname' => 'Otieno',
-            'email' => 'amina@example.test',
-            'phoneno' => '+254700000000',
-            'course' => $activeCourse->name,
+            'first_name' => 'Amina',
+            'second_name' => 'Otieno',
+            'course_id' => $course->id,
         ]);
-        $student->enrollments()->create([
-            'course_id' => $activeCourse->id,
-            'semester_id' => Semester::create(['name' => 'Semester 1'])->id,
-            'academic_year_id' => AcademicYear::create(['name' => '2026/2027'])->id,
+        Fee::create([
+            'student_id' => $student->id,
+            'amount' => 20000,
+            'fee_type' => 'Tuition',
+            'status' => 'Paid',
         ]);
 
         $this->actingAs($user)
@@ -58,10 +67,8 @@ class DashboardTest extends TestCase
                 '>1</h3>',
                 'Total Courses',
                 '>3</h3>',
-                'Total Enrollments',
+                'Fee Records',
                 '>1</h3>',
-                'Active Courses',
-                '>2</h3>',
             ], false)
             ->assertSee('class="nav-link active"', false);
     }
@@ -93,53 +100,42 @@ class DashboardTest extends TestCase
             ->assertSee(route('profile.edit'), false);
     }
 
-    public function test_authenticated_user_can_register_a_student_with_an_enrollment(): void
+    public function test_authenticated_user_can_register_a_student_for_a_course(): void
     {
         $user = User::factory()->create();
+        $course = Course::create(['name' => 'Computer Science']);
 
         $response = $this->actingAs($user)
             ->post(route('students.store'), [
-                'firstname' => 'Amina',
-                'secondname' => 'Otieno',
-                'email' => 'amina@example.test',
-                'phoneno' => '+254700000000',
-                'course' => 'Computer Science',
-                'semester' => 'Semester 1',
-                'academic_year' => '2026/2027',
+                'first_name' => 'Amina',
+                'second_name' => 'Otieno',
+                'course_id' => $course->id,
             ]);
 
-        $student = Student::where('email', 'amina@example.test')->firstOrFail();
-        $enrollment = $student->enrollments()->firstOrFail();
+        $student = Student::where('first_name', 'Amina')->firstOrFail();
 
         $response->assertRedirect(route('students.index'));
-        $this->assertDatabaseHas('enrollments', [
-            'student_id' => $student->id,
-            'course_id' => $enrollment->course_id,
-            'semester_id' => $enrollment->semester_id,
-            'academic_year_id' => $enrollment->academic_year_id,
+        $this->assertDatabaseHas('students', [
+            'id' => $student->id,
+            'first_name' => 'Amina',
+            'second_name' => 'Otieno',
+            'course_id' => $course->id,
         ]);
         $this->assertDatabaseHas('courses', ['name' => 'Computer Science']);
-        $this->assertDatabaseHas('semesters', ['name' => 'Semester 1']);
-        $this->assertDatabaseHas('academic_years', ['name' => '2026/2027']);
     }
 
-    public function test_student_registration_requires_valid_enrollment_details(): void
+    public function test_student_registration_requires_valid_student_and_course_details(): void
     {
         $this->actingAs(User::factory()->create())
             ->from(route('students.create'))
             ->post(route('students.store'), [
-                'firstname' => 'Amina',
-                'secondname' => 'Otieno',
-                'email' => 'invalid-email',
-                'phoneno' => '+254700000000',
-                'course' => '',
-                'semester' => '',
-                'academic_year' => '',
+                'first_name' => '',
+                'second_name' => '',
+                'course_id' => 999,
             ])
-            ->assertSessionHasErrors(['email', 'course', 'semester', 'academic_year']);
+            ->assertSessionHasErrors(['first_name', 'second_name', 'course_id']);
 
         $this->assertDatabaseCount('students', 0);
-        $this->assertDatabaseCount('enrollments', 0);
     }
 
     public function test_dashboard_navigation_has_working_menu_links_and_account_actions(): void
