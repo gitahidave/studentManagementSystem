@@ -3,6 +3,7 @@
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeeController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
@@ -22,10 +23,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('fees', FeeController::class)->only(['index', 'create', 'store']);
 
-    Route::view('/payments', 'pages.placeholder', [
-        'title' => 'Payments',
-        'description' => 'Review payments from this section.',
-    ])->name('payments.index');
+    Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store']);
 
     Route::view('/reports', 'pages.placeholder', [
         'title' => 'Reports',

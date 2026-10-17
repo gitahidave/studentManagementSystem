@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\Fee;
+use App\Models\Payment;
 use App\Models\Semester;
 use App\Models\Student;
 use App\Models\User;
@@ -119,6 +120,36 @@ class DashboardTest extends TestCase
                 '>5,000.00</h3>',
             ], false)
             ->assertSee('class="nav-link active"', false);
+    }
+
+    public function test_dashboard_totals_include_partial_payments_and_remaining_balances(): void
+    {
+        $course = Course::create(['name' => 'Computer Science']);
+        $student = Student::create([
+            'first_name' => 'Amina',
+            'second_name' => 'Otieno',
+            'course_id' => $course->id,
+        ]);
+        $fee = Fee::create([
+            'student_id' => $student->id,
+            'amount' => 1000,
+            'fee_type' => 'Tuition',
+            'status' => 'Partial',
+        ]);
+        Payment::create([
+            'fee_id' => $fee->id,
+            'amount' => 400,
+            'method' => 'Cash',
+            'status' => 'Completed',
+            'paid_at' => now(),
+        ]);
+
+        $this->actingAs(User::factory()->create())
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('>400.00</h3>', false)
+            ->assertSee('>600.00</h3>', false)
+            ->assertSee('title="'.now()->format('M Y').': 400.00"', false);
     }
 
     public function test_sidebar_links_open_authenticated_placeholder_pages(): void

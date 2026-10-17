@@ -34,11 +34,215 @@
     white-space: nowrap;
 }
 
+.payments-page .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 2rem;
+}
+
+.payments-page .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.1rem;
+    margin-bottom: 1.4rem;
+}
+
+.payments-page .summary-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    min-height: 5.2rem;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.payments-page .summary-label {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.payments-page .summary-value {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #212529;
+}
+
+.payments-page .payment-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 2.3fr) minmax(160px, 1.4fr) minmax(160px, 1.4fr) auto;
+    gap: 0.8rem;
+    margin-bottom: 1.3rem;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+}
+
+.payments-page .toolbar-field {
+    display: flex;
+    align-items: center;
+}
+
+.payments-page .toolbar-field input,
+.payments-page .toolbar-field select {
+    width: 100%;
+    min-height: 2.6rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    background: #ffffff;
+    padding: 0.45rem 0.75rem;
+    color: #212529;
+    font-size: 0.95rem;
+}
+
+.payments-page .search-action {
+    width: 4.5rem;
+    border: 0;
+    background: #0d6efd;
+    color: #ffffff;
+    border-radius: 0.375rem;
+    font-size: 1.1rem;
+}
+
+.payments-page .transactions-panel {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+}
+
+.payments-page .panel-heading {
+    padding: 1rem;
+}
+
+.payments-page .panel-heading h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.payments-page .panel-heading p {
+    margin: 0.2rem 0 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.payments-page .payment-table-wrap {
+    border-top: 1px solid #dee2e6;
+}
+
+.payments-page .payments-table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+.payments-page .payments-table thead th {
+    background: #f8f9fa;
+    font-weight: 700;
+    text-align: left;
+    padding: 0.65rem;
+    border-bottom: 1px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.payments-page .payments-table tbody td {
+    padding: 0.7rem 0.65rem;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
+}
+
+.payments-page .student-name,
+.payments-page .amount-cell {
+    font-weight: 700;
+}
+
+.payments-page .student-number {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.payments-page .method-badge,
+.payments-page .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.payments-page .method-badge.mpesa,
+.payments-page .status-badge.completed {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.payments-page .method-badge.cash {
+    background: #e2e3e5;
+    color: #41464b;
+}
+
+.payments-page .method-badge.bank {
+    background: #cfe2ff;
+    color: #084298;
+}
+
+.payments-page .method-badge.cheque {
+    background: #fff3cd;
+    color: #664d03;
+}
+
+.payments-page .status-badge.pending {
+    background: #fff3cd;
+    color: #664d03;
+}
+
+.payments-page .status-badge.failed {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.payments-page .pagination-wrap {
+    padding: 1rem;
+}
+
+.payments-page .pagination {
+    margin: 0;
+    justify-content: flex-end;
+}
+
+.payments-page .empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #6c757d;
+}
+
 @media (max-width: 767.98px) {
     .sidebar {
         flex-basis: auto;
         width: 100%;
         min-height: auto;
+    }
+
+    .payments-page .page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .payments-page .summary-grid,
+    .payments-page .payment-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .payments-page .search-action {
+        width: 100%;
+        min-height: 2.6rem;
     }
 }
 

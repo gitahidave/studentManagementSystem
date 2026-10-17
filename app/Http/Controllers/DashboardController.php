@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Fee;
+use App\Models\Payment;
 use App\Models\Student;
 use Illuminate\Support\Collection;
 
@@ -13,12 +14,21 @@ class DashboardController extends Controller
     {
         $totalStudents = Student::count();
         $totalCourses = Course::count();
-        $totalAmountPaid = (float) Fee::query()
+        $legacyPaidAmount = (float) Fee::query()
             ->where('status', 'Paid')
+            ->whereDoesntHave('payments', fn ($query) => $query->where('status', 'Completed'))
+            ->sum('amount');
+        $totalAmountPaid = $legacyPaidAmount + (float) Payment::query()
+            ->where('status', 'Completed')
             ->sum('amount');
         $totalAmountPending = (float) Fee::query()
-            ->where('status', 'Pending')
-            ->sum('amount');
+            ->whereIn('status', ['Pending', 'Partial'])
+            ->withSum(['payments as completed_payments_total' => fn ($query) => $query->where('status', 'Completed')], 'amount')
+            ->get(['id', 'amount'])
+            ->sum(fn (Fee $fee): float => max(
+                0,
+                (float) $fee->amount - (float) $fee->completed_payments_total
+            ));
 
         $feeStatusStats = Fee::query()
             ->get(['status'])
@@ -65,12 +75,26 @@ class DashboardController extends Controller
         Fee::query()
             ->where('created_at', '>=', $monthStart)
             ->where('status', 'Paid')
+            ->whereDoesntHave('payments', fn ($query) => $query->where('status', 'Completed'))
             ->get(['amount', 'created_at'])
             ->each(function (Fee $fee) use ($monthlyFeeStats): void {
                 $monthKey = $fee->created_at->format('Y-m');
                 if ($monthlyFeeStats->has($monthKey)) {
                     $monthStat = $monthlyFeeStats->get($monthKey);
                     $monthStat['amount'] += (float) $fee->amount;
+                    $monthlyFeeStats->put($monthKey, $monthStat);
+                }
+            });
+
+        Payment::query()
+            ->where('status', 'Completed')
+            ->where('paid_at', '>=', $monthStart)
+            ->get(['amount', 'paid_at'])
+            ->each(function (Payment $payment) use ($monthlyFeeStats): void {
+                $monthKey = $payment->paid_at->format('Y-m');
+                if ($monthlyFeeStats->has($monthKey)) {
+                    $monthStat = $monthlyFeeStats->get($monthKey);
+                    $monthStat['amount'] += (float) $payment->amount;
                     $monthlyFeeStats->put($monthKey, $monthStat);
                 }
             });
