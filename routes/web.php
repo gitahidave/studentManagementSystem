@@ -21,7 +21,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('courses', CourseController::class)->except(['show']);
 
-    Route::resource('fees', FeeController::class)->only(['index', 'create', 'store']);
+    Route::resource('fees', FeeController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
     Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store']);
 

@@ -12,6 +12,7 @@ class Fee extends Model
         'student_id',
         'amount',
         'fee_type',
+        'reference',
         'status',
     ];
 

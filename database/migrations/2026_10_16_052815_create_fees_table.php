@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
             $table->decimal('amount', 10, 2);
             $table->string('fee_type');
+            $table->string('reference')->nullable();
             $table->string('status');
             $table->timestamps();
         });
