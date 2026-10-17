@@ -98,9 +98,15 @@ class PaymentsTest extends TestCase
         $this->assertNotNull(Payment::firstOrFail()->paid_at);
     }
 
-    public function test_payment_summary_displays_values_aggregated_from_payment_records(): void
+    public function test_payment_summary_matches_dashboard_collected_amount_including_legacy_paid_fees(): void
     {
         $fee = $this->createFee(5000);
+        Fee::create([
+            'student_id' => $fee->student_id,
+            'amount' => 500,
+            'fee_type' => 'Legacy Tuition',
+            'status' => 'Paid',
+        ]);
         Payment::create([
             'fee_id' => $fee->id,
             'amount' => '1200.00',
@@ -125,9 +131,13 @@ class PaymentsTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get(route('payments.index'))
             ->assertOk()
-            ->assertSee('KSh 2,000.00')
+            ->assertSee('KSh 2,500.00')
             ->assertSee('KSh 1,200.00')
             ->assertSee('KSh 300.00');
+
+        $this->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('>2,500.00</h3>', false);
     }
 
     public function test_payment_list_filters_by_student_status_and_method(): void

@@ -40,7 +40,11 @@ class PaymentController extends Controller
             ->latest();
 
         $payments = $paymentsQuery->paginate(10)->withQueryString();
-        $totalCollected = Payment::where('status', 'Completed')->sum('amount');
+        $legacyPaidAmount = (float) Fee::query()
+            ->where('status', 'Paid')
+            ->whereDoesntHave('payments', fn ($query) => $query->where('status', 'Completed'))
+            ->sum('amount');
+        $totalCollected = $legacyPaidAmount + (float) Payment::where('status', 'Completed')->sum('amount');
         $thisMonthCollected = Payment::where('status', 'Completed')
             ->whereBetween('paid_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->sum('amount');
