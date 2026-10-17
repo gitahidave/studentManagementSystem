@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FeeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
@@ -15,14 +16,11 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::resource('students', StudentController::class)->only(['index', 'create', 'store']);
+    Route::resource('students', StudentController::class);
 
     Route::resource('courses', CourseController::class)->except(['show']);
 
-    Route::view('/fees', 'pages.placeholder', [
-        'title' => 'Fees',
-        'description' => 'Review fee information from this section.',
-    ])->name('fees.index');
+    Route::resource('fees', FeeController::class)->only(['index', 'create', 'store']);
 
     Route::view('/payments', 'pages.placeholder', [
         'title' => 'Payments',

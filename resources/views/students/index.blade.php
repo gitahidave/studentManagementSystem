@@ -17,6 +17,9 @@
         @if (session('status'))
             <div class="alert alert-success" role="status">{{ session('status') }}</div>
         @endif
+        @if (session('error'))
+            <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+        @endif
 
         <div class="card border-0 shadow-sm">
             <div class="table-responsive">
@@ -25,6 +28,7 @@
                         <tr>
                             <th scope="col">Student</th>
                             <th scope="col">Course</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,10 +36,34 @@
                             <tr>
                                 <td>{{ $student->first_name }} {{ $student->second_name }}</td>
                                 <td>{{ $student->course->name }}</td>
+                                <td class="text-end text-nowrap">
+                                    <a href="{{ route('students.show', $student) }}"
+                                       class="btn btn-sm btn-outline-secondary"
+                                       aria-label="View {{ $student->first_name }} {{ $student->second_name }}">
+                                        <i class="bi bi-eye" aria-hidden="true"></i>
+                                    </a>
+                                    <a href="{{ route('students.edit', $student) }}"
+                                       class="btn btn-sm btn-outline-primary"
+                                       aria-label="Edit {{ $student->first_name }} {{ $student->second_name }}">
+                                        <i class="bi bi-pencil" aria-hidden="true"></i>
+                                    </a>
+                                    <form action="{{ route('students.destroy', $student) }}"
+                                          method="POST"
+                                          class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger"
+                                                aria-label="Delete {{ $student->first_name }} {{ $student->second_name }}"
+                                                onclick="return confirm('Are you sure you want to delete this student?')">
+                                            <i class="bi bi-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="2" class="text-center text-secondary py-4">
+                                <td colspan="3" class="text-center text-secondary py-4">
                                     No students registered yet.
                                 </td>
                             </tr>

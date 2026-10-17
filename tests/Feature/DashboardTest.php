@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\Fee;
+use App\Models\Semester;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -34,9 +36,35 @@ class DashboardTest extends TestCase
             ['id', 'student_id', 'amount', 'fee_type', 'status', 'created_at', 'updated_at'],
             Schema::getColumnListing('fees')
         );
+        $this->assertSame(
+            ['id', 'name', 'start_date', 'end_date', 'is_current', 'created_at', 'updated_at'],
+            Schema::getColumnListing('academic_years')
+        );
+        $this->assertSame(
+            ['id', 'academic_year_id', 'name', 'start_date', 'end_date', 'created_at', 'updated_at'],
+            Schema::getColumnListing('semesters')
+        );
         $this->assertFalse(Schema::hasTable('enrollments'));
-        $this->assertFalse(Schema::hasTable('academic_years'));
-        $this->assertFalse(Schema::hasTable('semesters'));
+    }
+
+    public function test_semesters_belong_to_academic_years(): void
+    {
+        $academicYear = AcademicYear::create([
+            'name' => '2026/2027',
+            'start_date' => '2026-09-01',
+            'end_date' => '2027-06-30',
+            'is_current' => true,
+        ]);
+
+        $semester = Semester::create([
+            'academic_year_id' => $academicYear->id,
+            'name' => 'Semester 1',
+            'start_date' => '2026-09-01',
+            'end_date' => '2026-12-20',
+        ]);
+
+        $this->assertTrue($semester->academicYear->is($academicYear));
+        $this->assertTrue($academicYear->semesters->contains($semester));
     }
 
     public function test_authenticated_users_can_access_the_dashboard_without_verified_email(): void
@@ -56,19 +84,34 @@ class DashboardTest extends TestCase
             'fee_type' => 'Tuition',
             'status' => 'Paid',
         ]);
+        Fee::create([
+            'student_id' => $student->id,
+            'amount' => 5000,
+            'fee_type' => 'Registration',
+            'status' => 'Pending',
+        ]);
 
         $this->actingAs($user)
             ->get(route('dashboard'))
             ->assertOk()
             ->assertSeeText('Dashboard Student')
             ->assertSeeText('Welcome to the Student Management System.')
+            ->assertSeeText('Fee status')
+            ->assertSeeText('Fees recorded by month')
+            ->assertSeeText('Paid fee amounts for the last six months.')
+            ->assertSeeText('Paid: 1 records')
+            ->assertSeeText('Pending: 1 records')
+            ->assertSee('Total Amount Paid', false)
+            ->assertSee('>20,000.00</h3>', false)
+            ->assertSee('background: conic-gradient(', false)
+            ->assertSee('title="'.now()->format('M Y').': 20,000.00"', false)
             ->assertSeeInOrder([
                 'Total Students',
                 '>1</h3>',
                 'Total Courses',
                 '>3</h3>',
-                'Fee Records',
-                '>1</h3>',
+                'Total Amount Paid',
+                '>20,000.00</h3>',
             ], false)
             ->assertSee('class="nav-link active"', false);
     }
