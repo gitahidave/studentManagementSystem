@@ -26,16 +26,26 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
+                            <th scope="col">Student No.</th>
                             <th scope="col">Student</th>
+                            <th scope="col">Gender</th>
+                            <th scope="col">Phone number</th>
+                            <th scope="col">Email</th>
                             <th scope="col">Course</th>
+                            <th scope="col">Status</th>
                             <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($students as $student)
                             <tr>
+                                <td>{{ $student->student_number }}</td>
                                 <td>{{ $student->first_name }} {{ $student->second_name }}</td>
+                                <td>{{ $student->gender ?? '-' }}</td>
+                                <td>{{ $student->phone_number ?? '-' }}</td>
+                                <td>{{ $student->email ?? '-' }}</td>
                                 <td>{{ $student->course->name }}</td>
+                                <td><span class="badge text-bg-{{ $student->status === 'Active' ? 'success' : ($student->status === 'Inactive' ? 'secondary' : 'info') }}">{{ $student->status }}</span></td>
                                 <td class="text-end text-nowrap">
                                     <a href="{{ route('students.show', $student) }}"
                                        class="btn btn-sm btn-outline-secondary"
@@ -63,7 +73,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="text-center text-secondary py-4">
+                                <td colspan="8" class="text-center text-secondary py-4">
                                     No students registered yet.
                                 </td>
                             </tr>

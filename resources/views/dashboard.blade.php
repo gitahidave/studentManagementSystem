@@ -11,7 +11,7 @@
         </div>
 
         <div class="row g-3">
-            <div class="col-12 col-sm-6 col-lg-4">
+            <div class="col-12 col-sm-6 col-lg-3">
                 <x-summary-card
                     title="Total Students"
                     :value="$totalStudents"
@@ -19,7 +19,7 @@
                     color="text-primary"
                 />
             </div>
-            <div class="col-12 col-sm-6 col-lg-4">
+            <div class="col-12 col-sm-6 col-lg-3">
                 <x-summary-card
                     title="Total Courses"
                     :value="$totalCourses"
@@ -27,12 +27,20 @@
                     color="text-info"
                 />
             </div>
-            <div class="col-12 col-sm-6 col-lg-4">
+            <div class="col-12 col-sm-6 col-lg-3">
                 <x-summary-card
-                    title="Total Amount Paid"
+                    title="Fees Collected"
                     :value="number_format($totalAmountPaid, 2)"
                     icon="cash-stack"
                     color="text-success"
+                />
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <x-summary-card
+                    title="Pending Fees"
+                    :value="number_format($totalAmountPending, 2)"
+                    icon="credit-card"
+                    color="text-danger"
                 />
             </div>
         </div>

@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class StudentController extends Controller
@@ -77,6 +78,10 @@ class StudentController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'second_name' => ['required', 'string', 'max:255'],
             'course_id' => ['required', 'integer', 'exists:courses,id'],
+            'gender' => ['nullable', Rule::in(['Female', 'Male', 'Other'])],
+            'phone_number' => ['nullable', 'string', 'max:30'],
+            'email' => ['nullable', 'email', 'max:255', Rule::unique('students')->ignore($request->route('student'))],
+            'status' => ['sometimes', 'required', Rule::in(['Active', 'Inactive', 'Graduated'])],
         ]);
     }
 }

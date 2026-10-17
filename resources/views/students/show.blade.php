@@ -28,8 +28,18 @@
                     <dd class="col-sm-9">{{ $student->first_name }}</dd>
                     <dt class="col-sm-3">Second name</dt>
                     <dd class="col-sm-9">{{ $student->second_name }}</dd>
+                    <dt class="col-sm-3">Student No.</dt>
+                    <dd class="col-sm-9">{{ $student->student_number }}</dd>
+                    <dt class="col-sm-3">Gender</dt>
+                    <dd class="col-sm-9">{{ $student->gender ?? '-' }}</dd>
+                    <dt class="col-sm-3">Phone number</dt>
+                    <dd class="col-sm-9">{{ $student->phone_number ?? '-' }}</dd>
+                    <dt class="col-sm-3">Email</dt>
+                    <dd class="col-sm-9">{{ $student->email ?? '-' }}</dd>
                     <dt class="col-sm-3">Course</dt>
                     <dd class="col-sm-9">{{ $student->course->name }}</dd>
+                    <dt class="col-sm-3">Status</dt>
+                    <dd class="col-sm-9">{{ $student->status }}</dd>
                 </dl>
             </div>
         </div>

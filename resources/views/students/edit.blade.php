@@ -52,6 +52,52 @@
                             </select>
                             @error('course_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
+                        <div class="col-md-6">
+                            <label for="student_number" class="form-label">Student No.</label>
+                            <input id="student_number" value="{{ $student->student_number }}" disabled
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="gender" class="form-label">Gender</label>
+                            <select id="gender" name="gender"
+                                    class="form-select @error('gender') is-invalid @enderror">
+                                <option value="">Select gender</option>
+                                @foreach (['Female', 'Male', 'Other'] as $gender)
+                                    <option value="{{ $gender }}"
+                                        @selected(old('gender', $student->gender) === $gender)>
+                                        {{ $gender }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('gender') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phone_number" class="form-label">Phone number</label>
+                            <input id="phone_number" name="phone_number" type="tel"
+                                   value="{{ old('phone_number', $student->phone_number) }}"
+                                   class="form-control @error('phone_number') is-invalid @enderror">
+                            @error('phone_number') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input id="email" name="email" type="email"
+                                   value="{{ old('email', $student->email) }}"
+                                   class="form-control @error('email') is-invalid @enderror">
+                            @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="status" class="form-label">Status</label>
+                            <select id="status" name="status" required
+                                    class="form-select @error('status') is-invalid @enderror">
+                                @foreach (['Active', 'Inactive', 'Graduated'] as $status)
+                                    <option value="{{ $status }}"
+                                        @selected(old('status', $student->status) === $status)>
+                                        {{ $status }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('status') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
                     </div>
 
                     <div class="mt-4 d-flex gap-2">

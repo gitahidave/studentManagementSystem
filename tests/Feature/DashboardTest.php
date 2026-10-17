@@ -28,8 +28,9 @@ class DashboardTest extends TestCase
             ['id', 'name', 'created_at', 'updated_at'],
             Schema::getColumnListing('courses')
         );
-        $this->assertSame(
-            ['id', 'first_name', 'second_name', 'course_id', 'created_at', 'updated_at'],
+        $this->assertEqualsCanonicalizing(
+            ['id', 'first_name', 'second_name', 'course_id', 'created_at', 'updated_at',
+                'student_number', 'gender', 'phone_number', 'email', 'status'],
             Schema::getColumnListing('students')
         );
         $this->assertSame(
@@ -101,8 +102,10 @@ class DashboardTest extends TestCase
             ->assertSeeText('Paid fee amounts for the last six months.')
             ->assertSeeText('Paid: 1 records')
             ->assertSeeText('Pending: 1 records')
-            ->assertSee('Total Amount Paid', false)
+            ->assertSee('Fees Collected', false)
             ->assertSee('>20,000.00</h3>', false)
+            ->assertSee('>5,000.00</h3>', false)
+            ->assertSee('bi bi-credit-card', false)
             ->assertSee('background: conic-gradient(', false)
             ->assertSee('title="'.now()->format('M Y').': 20,000.00"', false)
             ->assertSeeInOrder([
@@ -110,8 +113,10 @@ class DashboardTest extends TestCase
                 '>1</h3>',
                 'Total Courses',
                 '>3</h3>',
-                'Total Amount Paid',
+                'Fees Collected',
                 '>20,000.00</h3>',
+                'Pending Fees',
+                '>5,000.00</h3>',
             ], false)
             ->assertSee('class="nav-link active"', false);
     }

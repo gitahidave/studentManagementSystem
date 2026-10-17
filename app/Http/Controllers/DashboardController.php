@@ -16,6 +16,9 @@ class DashboardController extends Controller
         $totalAmountPaid = (float) Fee::query()
             ->where('status', 'Paid')
             ->sum('amount');
+        $totalAmountPending = (float) Fee::query()
+            ->where('status', 'Pending')
+            ->sum('amount');
 
         $feeStatusStats = Fee::query()
             ->get(['status'])
@@ -79,6 +82,7 @@ class DashboardController extends Controller
             'totalStudents',
             'totalCourses',
             'totalAmountPaid',
+            'totalAmountPending',
             'feeStatusStats',
             'totalFeeStatusRecords',
             'feeStatusPieBackground',
